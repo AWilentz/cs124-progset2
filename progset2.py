@@ -47,11 +47,8 @@ def strassen(m1, m2, n0):
 
     if r2 != r1 or c1 != r1 or c2 != r1:
         raise ValueError("Matrices must be square and dimensions must match")
-
-    if n == 1:
-        return [[m1[0][0] * m2[0][0]]]
     
-    if n < n0:
+    if n <= n0:
         return matrix(m1, m2)
     
     half = n // 2
@@ -59,13 +56,13 @@ def strassen(m1, m2, n0):
     a, b, c, d = split(m1, half)
     e, f, g, h = split(m2, half)
 
-    p1 = strassen(a, subtract(f, h))
-    p2 = strassen(add(a, b), h)
-    p3 = strassen(add(c, d), e)
-    p4 = strassen(d, subtract(g, e))
-    p5 = strassen(add(a, d), add(e, g))
-    p6 = strassen(subtract(b, d), add(g, h))
-    p7 = strassen(subtract(a, c), add(e, f))
+    p1 = strassen(a, subtract(f, h), n0)
+    p2 = strassen(add(a, b), h, n0)
+    p3 = strassen(add(c, d), e, n0)
+    p4 = strassen(d, subtract(g, e), n0)
+    p5 = strassen(add(a, d), add(e, h), n0)
+    p6 = strassen(subtract(b, d), add(g, h), n0)
+    p7 = strassen(subtract(a, c), add(e, f), n0)
 
     top_left = add(subtract(add(p5, p4), p2), p6)
     top_right = add(p1, p2)
@@ -102,3 +99,8 @@ def subtract(m1, m2):
             m[i][j] = m1[i][j] - m2[i][j]
 
     return m
+
+m1 = [[1, 2], [3, 4]]
+m2 = [[3, 4], [1, 2]]
+
+print(strassen(m1, m2, 1))
