@@ -51,6 +51,9 @@ def strassen(m1, m2, n0):
     if n <= n0:
         return matrix(m1, m2)
     
+    if n == 1:
+        return [[m1[0][0] * m2[0][0]]]
+    
     half = n // 2
 
     a, b, c, d = split(m1, half)
