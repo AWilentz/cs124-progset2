@@ -13,7 +13,7 @@ def matrix(m1, m2):
     for i in range(r1):
         for j in range(c2):
             for k in range(r2):
-                result[i][j] += m1[i][k] * m2[k][j]
+                m[i][j] += m1[i][k] * m2[k][j]
 
     return m
 
@@ -32,26 +32,29 @@ def matrix(m1, m2):
     for i in range(r1):
         for j in range(c2):
             for k in range(r2):
-                result[i][j] += m1[i][k] * m2[k][j]
+                m[i][j] += m1[i][k] * m2[k][j]
 
     return m
 
-def strassen(m1, m2):
+def strassen(m1, m2, n0):
 
     r1 = len(m1)
     c1 = len(m1[0])
     r2 = len(m2)
     c2 = len(m2[0])
+
+    n = r1
+
     if r2 != r1 or c1 != r1 or c2 != r1:
         raise ValueError("Matrices must be square and dimensions must match")
-    
-    half = r1 // 2
 
-    # Base case: if the matrix is 1x1, compute and return the product.
-    if r1 == 1:
+    if n == 1:
         return [[m1[0][0] * m2[0][0]]]
-
-    # Split each matrix into four submatrices.
+    
+    if n < n0:
+        return matrix(m1, m2)
+    
+    half = n // 2
 
     a, b, c, d = split(m1, half)
     e, f, g, h = split(m2, half)
