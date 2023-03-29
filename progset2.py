@@ -6,25 +6,6 @@ def matrix(m1, m2):
     c2 = len(m2[0])
 
     if c1 != r2:
-        raise ValueError("Matrices cannot be multiplied")
-
-    m = [[0 for _ in range(c2)] for _ in range(r1)]
-
-    for i in range(r1):
-        for j in range(c2):
-            for k in range(r2):
-                m[i][j] += m1[i][k] * m2[k][j]
-
-    return m
-
-def matrix(m1, m2):
-
-    r1 = len(m1)
-    c1 = len(m1[0])
-    r2 = len(m2)
-    c2 = len(m2[0])
-
-    if c1 != r2:
         raise ValueError("Dimensions must match")
 
     m = [[0 for _ in range(c2)] for _ in range(r1)]
@@ -52,7 +33,7 @@ def strassen(m1, m2, n0):
         return matrix(m1, m2)
     
     if n == 1:
-        return [[m1[0][0] * m2[0][0]]]
+        return [[m1[0][0] * [0][0]]]
     
     half = n // 2
 
