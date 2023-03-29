@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 def matrix(m1, m2):
@@ -113,7 +114,7 @@ m2 = [[3, 4, 5],
       [1, 2, 3], 
       [6, 7, 9]]
 
-print(strassen(m1, m2, 1))
+# print(strassen(m1, m2, 1))
 
 def count_triangles(m):
     A3 = strassen(m, strassen(m, m, 20), 20)
@@ -134,5 +135,31 @@ def random_graph(n, p):
                 m[j][i] = 1
     return m
 
-for p in [.01, .02, .03, .04, .05]:
-    print(count_triangles(random_graph(1024, p)))
+# for p in [.01, .02, .03, .04, .05]:
+#     print(count_triangles(random_graph(1024, p)))
+
+if len(sys.argv) != 4:
+    raise TypeError("Incorrect number of arguments")
+
+if int(sys.argv[1]) != 0:
+    raise ValueError("Invalid flag")
+
+dim = int(sys.argv[2])
+
+a = [[0 for _ in range(dim)] for _ in range(dim)]
+b = [[0 for _ in range(dim)] for _ in range(dim)]
+
+f = open(sys.argv[3], 'r')
+
+for i in range(dim):
+    for j in range(dim):
+        a[i][j] = int(f.readline().strip())
+
+for i in range(dim):
+    for j in range(dim):
+        b[i][j] = int(f.readline().strip())
+
+c = strassen(a, b, 1)
+
+for i in range(dim):
+    print(c[i][i])
