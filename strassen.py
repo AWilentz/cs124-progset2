@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import time
 
 def matrix(m1, m2):
 
@@ -40,14 +41,17 @@ def strassen(m1, m2, n0):
     if n == 1:
         return [[m1[0][0] * [0][0]]]
     
-    if not power_of_two(n):
-        n_ = n
-        n = 1<<(n-1).bit_length()
+    if n % 2 != 0:
+        n += 1
         padded = True
-        m1 = np.vstack((m1, [[0 for _ in range(n_)] for _ in range(n-n_)]))  
-        m1 = np.hstack((m1, np.transpose([[0 for _ in range(n)] for _ in range(n-n_)])))
-        m2 = np.vstack((m2, [[0 for _ in range(n_)] for _ in range(n-n_)]))  
-        m2 = np.hstack((m2, np.transpose([[0 for _ in range(n)] for _ in range(n-n_)])))
+        m1_temp = [[0 for _ in range(n)] for _ in range(n)]
+        m2_temp = [[0 for _ in range(n)] for _ in range(n)]
+        for i in range(n-1):
+            for j in range(n-1):
+                m1_temp[i][j] = m1[i][j]
+                m2_temp[i][j] = m2[i][j]
+        m1 = m1_temp
+        m2 = m2_temp
     
     half = n // 2
 
@@ -76,14 +80,14 @@ def strassen(m1, m2, n0):
             m[i + half][j + half] = bottom_right[i][j]
 
     if padded:
-        m = [[m[i][j] for j in range(n_)] for i in range(n_)]
+        m = [[m[i][j] for j in range(n-1)] for i in range(n-1)]
 
     return m
 
-def power_of_two(n):
-    if (n & n-1 == 0 and n > 0):
-        return True
-    return False
+# def power_of_two(n):
+#     if (n & n-1 == 0 and n > 0):
+#         return True
+#     return False
 
 def split(m, half):
     return [r[:half] for r in m[:half]], [r[half:] for r in m[:half]], [r[:half] for r in m[half:]], [r[half:] for r in m[half:]]
@@ -106,18 +110,18 @@ def subtract(m1, m2):
 
     return m
 
-m1 = [[1, 2, 3], 
-      [3, 4, 5], 
-      [6, 7, 9]]
+# m1 = [[1, 2, 3], 
+#       [3, 4, 5], 
+#       [6, 7, 9]]
 
-m2 = [[3, 4, 5], 
-      [1, 2, 3], 
-      [6, 7, 9]]
+# m2 = [[3, 4, 5], 
+#       [1, 2, 3], 
+#       [6, 7, 9]]
 
 # print(strassen(m1, m2, 1))
 
 def count_triangles(m):
-    A3 = strassen(m, strassen(m, m, 20), 20)
+    A3 = strassen(m, strassen(m, m, 32), 32)
 
     trace = np.trace(A3)
 
@@ -135,8 +139,22 @@ def random_graph(n, p):
                 m[j][i] = 1
     return m
 
+def random_matrix(d):
+    m = [[0 for _ in range(d)] for _ in range(d)]
+    for i in range(d):
+        for j in range(d):
+            m[i][j] = np.random.rand()
+    return m
+
 # for p in [.01, .02, .03, .04, .05]:
-#     print(count_triangles(random_graph(1024, p)))
+#     sum = 0
+#     print(p)
+#     for i in range(5):
+#         triangles = count_triangles(random_graph(1024, p))
+#         print(f"Trial {i}: {triangles}")
+#         sum += triangles
+#     print(f"Average: {sum / 5}")
+        
 
 if len(sys.argv) != 4:
     raise TypeError("Incorrect number of arguments")
@@ -151,6 +169,30 @@ b = [[0 for _ in range(dim)] for _ in range(dim)]
 
 f = open(sys.argv[3], 'r')
 
+# for d in [8, 16, 32, 64, 128, 256, 512]:
+#     for n0 in [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]:
+#         if d >= n0:
+#             a = random_matrix(d)
+#             b = random_matrix(d)
+#             t = time.time()
+#             c = strassen(a, b, n0)
+#             t = time.time() - t
+#             print(d, n0, t)
+#             t = 0
+
+# for d in [9, 17, 33, 65, 129, 257]:
+#     for n0 in [1, 2, 3, 5, 9, 17, 33, 65, 129, 257]:
+#         if d >= n0:
+#             a = random_matrix(d)
+#             b = random_matrix(d)
+#             t = time.time()
+#             c = strassen(a, b, n0)
+#             t = time.time() - t
+#             print(d, n0, t)
+#             t = 0
+
+
+
 for i in range(dim):
     for j in range(dim):
         a[i][j] = int(f.readline().strip())
@@ -159,7 +201,10 @@ for i in range(dim):
     for j in range(dim):
         b[i][j] = int(f.readline().strip())
 
-c = strassen(a, b, 1)
+c = strassen(a, b, 32)
 
 for i in range(dim):
     print(c[i][i])
+
+
+
